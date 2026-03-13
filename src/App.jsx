@@ -1,13 +1,11 @@
-import { useState } from 'react'
+import React from 'react'
+import ProductPage from './components/ProductPage'
 
-import './App.css'
-
-function App() {
-  
-
+const App = () => {
   return (
     <>
-     <h1 className='text-red-500 text-center text-3xl text-bold'>Hello World</h1>
+    <h1>Hello</h1>
+    <ProductPage/>
     </>
   )
 }

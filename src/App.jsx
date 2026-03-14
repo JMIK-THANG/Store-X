@@ -1,13 +1,12 @@
-import React from 'react'
-import ProductPage from './components/ProductPage'
+import React from "react";
+import ProductPage from "./components/ProductPage";
 
 const App = () => {
   return (
     <>
-    <h1>Hello</h1>
-    <ProductPage/>
+      <ProductPage />
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;

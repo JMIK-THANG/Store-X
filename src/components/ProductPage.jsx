@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
@@ -37,6 +37,18 @@ const ProductPage = () => {
       setLoading(false);
     }
   }, [categories, error]);
+
+  const filteredProducts = useMemo(() => {
+    if (search) {
+      return products.filter((p) => {
+        p.title.toLowerCase().includes(search.toLowerCase());
+      });
+    } else {
+      return selectedCategories === "All"
+        ? products
+        : products.filter((p) => p.category === selectedCategories);
+    }
+  }, [products, search, selectedCategories]);
   return (
     <>
       <h1>Store-X</h1>
@@ -57,8 +69,28 @@ const ProductPage = () => {
         value={search}
         onChang={(e) => setSearch(e.target.value)}
       />
+      <ProductList products={filteredProducts} />
     </>
   );
 };
 
+const ProductList = ({ products }) => {
+  if (!products || products.length === 0) {
+    return <p>No Products found.</p>;
+  }
+  return (
+    <div>
+      <div>
+        {products.map((item) => (
+          <div key={item.id}>
+            <img src={item.image} alt={item.title} />
+            <h3>{item.title}</h3>
+            <p>{item.category}</p>
+            <p>{item.price}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 export default ProductPage;

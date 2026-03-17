@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-
+import ProductGrid from "../components/ProductGrid";
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -54,43 +54,26 @@ const ProductPage = () => {
       <h1>Store-X</h1>
       <label>Choose By Category</label>
       <select
+        className="border mx-4"
         value={selectedCategories}
         onChange={(e) => setSelectedCategories(e.target.value)}
       >
         <option value="All">All</option>
-        {categories.map((product) => (
-          <option value={product}>{product}</option>
+        {categories.map((category) => (
+          <option key={category} value={category}>{category}</option>
         ))}
       </select>
       <input
-        className="p1 rounded-lg border-2"
+        className=" rounded-lg border-2"
         type="text"
         placeholder="Search Products..."
         value={search}
         onChang={(e) => setSearch(e.target.value)}
       />
-      <ProductList products={filteredProducts} />
+      <ProductGrid products={filteredProducts} />
     </>
   );
 };
 
-const ProductList = ({ products }) => {
-  if (!products || products.length === 0) {
-    return <p>No Products found.</p>;
-  }
-  return (
-    <div>
-      <div>
-        {products.map((item) => (
-          <div key={item.id}>
-            <img src={item.image} alt={item.title} />
-            <h3>{item.title}</h3>
-            <p>{item.category}</p>
-            <p>{item.price}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
+
 export default ProductPage;

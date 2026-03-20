@@ -38,17 +38,18 @@ const ProductPage = () => {
     }
   }, [categories, error]);
 
-  const filteredProducts = useMemo(() => {
-    if (search) {
-      return products.filter((p) => {
-        p.title.toLowerCase().includes(search.toLowerCase());
-      });
-    } else {
-      return selectedCategories === "All"
-        ? products
-        : products.filter((p) => p.category === selectedCategories);
-    }
-  }, [products, search, selectedCategories]);
+ const filteredProducts = useMemo(() => {
+  return products.filter((p) => {
+    const matchesSearch = p.title
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    const matchesCategory =
+      selectedCategories === "All" || p.category === selectedCategories;
+
+    return matchesSearch && matchesCategory;
+  });
+}, [products, search, selectedCategories]);
   return (
     <>
       <h1>Store-X</h1>
@@ -60,20 +61,21 @@ const ProductPage = () => {
       >
         <option value="All">All</option>
         {categories.map((category) => (
-          <option key={category} value={category}>{category}</option>
+          <option key={category} value={category}>
+            {category}
+          </option>
         ))}
       </select>
       <input
-        className=" rounded-lg border-2"
+        className="rounded-lg border-2"
         type="text"
         placeholder="Search Products..."
         value={search}
-        onChang={(e) => setSearch(e.target.value)}
+        onChange={(e) => setSearch(e.target.value)}
       />
       <ProductGrid products={filteredProducts} />
     </>
   );
 };
-
 
 export default ProductPage;

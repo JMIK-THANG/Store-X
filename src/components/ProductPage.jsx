@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import ProductGrid from "../components/ProductGrid";
+import ProductGrid from "./ProductGrid";
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);

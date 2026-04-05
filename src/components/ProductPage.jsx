@@ -1,59 +1,61 @@
 import { useState, useEffect, useMemo } from "react";
 import ProductGrid from "./ProductGrid";
+
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState("All");
-  const [uniqueCategories, setUniqueCategories] = useState("All");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    async function getProducts() {
+    async function fetchData() {
       try {
-        let response = await fetch("https://fakestoreapi.com/products");
-        let productsData = await response.json();
+        const [productsRes, categoriesRes] = await Promise.all([
+          fetch("http://localhost:5000/products"),
+          fetch("http://localhost:5000/categories"),
+        ]);
 
-        setProducts(productsData);
-        let uniqueCategories = Array.from(
-          new Set(productsData.map((product) => product.category)),
-        );
-        setCategories(uniqueCategories);
+        const productsData = await productsRes.json();
+        const categoriesData = await categoriesRes.json();
+
+        setProducts(productsData.data);
+        setCategories(categoriesData.data);
+        setError("");
       } catch (err) {
         console.log(err);
-        setError("Something went wrong | Try again later. ");
+        setError("Something went wrong | Try again later.");
+      } finally {
+        setLoading(false);
       }
     }
-    getProducts();
+
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    if (categories.length > 0) {
-      setLoading(false);
-      setError("");
-    }
-    if (error) {
-      setLoading(false);
-    }
-  }, [categories, error]);
+  const filteredProducts = useMemo(() => {
+    return products.filter((p) => {
+      const matchesSearch = p.name
+        .toLowerCase()
+        .includes(search.toLowerCase());
 
- const filteredProducts = useMemo(() => {
-  return products.filter((p) => {
-    const matchesSearch = p.title
-      .toLowerCase()
-      .includes(search.toLowerCase());
+      const matchesCategory =
+        selectedCategories === "All" ||
+        p.category_id === Number(selectedCategories);
 
-    const matchesCategory =
-      selectedCategories === "All" || p.category === selectedCategories;
+      return matchesSearch && matchesCategory;
+    });
+  }, [products, search, selectedCategories]);
 
-    return matchesSearch && matchesCategory;
-  });
-}, [products, search, selectedCategories]);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
     <>
       <h1>Store-X</h1>
       <label>Choose By Category</label>
+
       <select
         className="border mx-4"
         value={selectedCategories}
@@ -61,11 +63,12 @@ const ProductPage = () => {
       >
         <option value="All">All</option>
         {categories.map((category) => (
-          <option key={category} value={category}>
-            {category}
+          <option key={category.id} value={category.id}>
+            {category.name}
           </option>
         ))}
       </select>
+
       <input
         className="rounded-lg border-2"
         type="text"
@@ -73,6 +76,7 @@ const ProductPage = () => {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
+
       <ProductGrid products={filteredProducts} />
     </>
   );

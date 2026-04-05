@@ -1,0 +1,64 @@
+...table list ....
+create table users(
+
+      id serial PRIMARY KEY, 
+      name VARCHAR(100), 
+      email VARCHAR(150) UNIQUE, 
+      password TEXT, 
+      role_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+..............................
+
+create table categories(
+
+      id serial PRIMARY KEY, 
+      name VARCHAR(100),
+      create_at TIMESTAMP default CURRENT_TIMESTAMP
+)
+............CREATE TABLE product_images (
+  id SERIAL PRIMARY KEY,
+  product_id INT REFERENCES products(id),
+  image_url TEXT
+);
+
+.................CREATE TABLE cart......
+ (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id)
+);
+
+.................CREATE TABLE cart_items..............
+(
+  id SERIAL PRIMARY KEY,
+  cart_id INT REFERENCES cart(id),
+  product_id INT REFERENCES products(id),
+  quantity INT
+);
+
+.................CREATE TABLE orders.............
+ (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id),
+  total_amount NUMERIC(10,2),
+  status VARCHAR(50) DEFAULT 'pending',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+.................CREATE TABLE order_items.............
+ (
+  id SERIAL PRIMARY KEY,
+  order_id INT REFERENCES orders(id),
+  product_id INT REFERENCES products(id),
+  quantity INT,
+  price NUMERIC(10,2)
+);
+
+.................CREATE TABLE reviews...............
+ (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id),
+  product_id INT REFERENCES products(id),
+  rating INT,
+  comment TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

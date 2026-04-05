@@ -1,36 +1,39 @@
-🛍️ Store-X
+# 🛍️ Store-X
 
-Store-X is a full-stack product store application that allows users to browse, search, and filter products through a responsive and modern interface. The application integrates a backend API and database to manage product data and support scalable functionality.
+Store-X is a full-stack e-commerce web application that allows users to browse, search, and filter products through a fast and responsive interface. The application integrates a backend API with a relational database to manage product data efficiently and support scalable functionality.
 
-🚀 Features
+---
 
-Product browsing with category filtering
+## 🚀 Features
 
-Real-time product search
+- Dynamic product browsing with category filtering  
+- Real-time search functionality  
+- Responsive UI for all screen sizes  
+- RESTful API integration  
+- Backend data management and persistence  
+- Scalable full-stack architecture  
 
-Responsive modern UI
+---
 
-RESTful API integration
+## 🛠️ Tech Stack
 
-Backend data handling and persistence
+### Frontend
+- React  
+- Vite  
+- Tailwind CSS  
 
-Scalable full-stack architecture
+### Backend
+- Node.js  
+- Express  
 
-🛠️ Tech Stack
-Frontend
+### Database
+- PostgreSQL  
 
-React
+---
 
-Vite
+## ⚙️ Getting Started
 
-Tailwind CSS
-
-Backend
-
-Node.js
-
-Express
-
-Database
-
-MongoDB
+### 1. Clone the repository
+```bash
+git clone https://github.com/JMIK-THANG/Store-X.git
+cd Store-X

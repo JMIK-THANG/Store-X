@@ -12,6 +12,7 @@ const ProductGrid = ({ products }) => {
               <img
                 className="mb-6 w-40 h-40 mx-auto object-cover"
                 src={item.image_url}
+               
                 alt={item.name}
               />
               <h3 className="mb-6 min-h-[60px]">{item.name}</h3>

@@ -1,12 +1,7 @@
-import React from "react";
-import ProductPage from "./components/ProductPage";
+import HomePage from "./pages/HomePage";
 
-const App = () => {
-  return (
-    <>
-      <ProductPage />
-    </>
-  );
-};
+function App() {
+  return <HomePage />;
+}
 
 export default App;

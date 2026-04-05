@@ -1,27 +1,35 @@
-const ProductGrid = ({ products }) => {
-  if (!products || products.length === 0) {
-    return <p>No Products found.</p>;
-  }
+import ProductCard from "./ProductCard";
 
+const ProductGrid = ({ products }) => {
   return (
-    <div>
-      <div className="p-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {products.map((item) => (
-            <div className="border rounded-xl p-4 text-center" key={item.id}>
-              <img
-                className="mb-6 w-40 h-40 mx-auto object-cover"
-                src={item.image_url}
-               
-                alt={item.name}
-              />
-              <h3 className="mb-6 min-h-[60px]">{item.name}</h3>
-              <p>${item.price}</p>
-            </div>
-          ))}
+    <section>
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="text-xl font-semibold">Trending Now</h3>
+          <p className="text-sm text-gray-500">
+            Our most loved pieces this week.
+          </p>
         </div>
       </div>
-    </div>
+
+      {products.length === 0 ? (
+        <p className="text-gray-500">No products found.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+          {products.slice(0, 8).map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      )}
+
+      {products.length > 8 && (
+        <div className="mt-6 text-center">
+          <button className="border px-5 py-2 rounded-full text-sm bg-white hover:bg-gray-50">
+            Load More Items
+          </button>
+        </div>
+      )}
+    </section>
   );
 };
 

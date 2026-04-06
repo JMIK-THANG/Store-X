@@ -32,6 +32,7 @@ const HomePage = () => {
 
         const categoriesData = await categoriesRes.json();
         const productsData = await productsRes.json();
+        console.log("products:", productsData);
 
         setCategories(categoriesData.data || []);
         setProducts(productsData.data || []);

@@ -16,6 +16,7 @@ app.use("/users", usersRoutes);
 app.use("/categories", categoriesRoutes);
 app.use('/products', productsRoutes)
 
+
 // Start server
 const PORT = 5000;
 

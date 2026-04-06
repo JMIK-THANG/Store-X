@@ -1,24 +1,36 @@
-const CategorySection = ({ categories }) => {
+const CategorySection = ({
+  categories,
+  selectedCategory,
+  setSelectedCategory,
+}) => {
   return (
-    <section>
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-semibold">Curated Categories</h3>
-        <button className="text-sm text-gray-500 hover:text-black">
-          View All
-        </button>
-      </div>
+    <section className="space-y-4">
+      <h2 className="text-2xl font-semibold">Shop by Category</h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="flex flex-wrap gap-3">
+        <button
+          onClick={() => setSelectedCategory("All")}
+          className={`px-4 py-2 rounded-full border ${
+            selectedCategory === "All"
+              ? "bg-black text-white"
+              : "bg-white text-black"
+          }`}
+        >
+          All
+        </button>
+
         {categories.map((category) => (
-          <div
+          <button
             key={category.id}
-            className="rounded-2xl bg-white border p-6 min-h-[140px] flex items-end shadow-sm"
+            onClick={() => setSelectedCategory(String(category.id))}
+            className={`px-4 py-2 rounded-full border ${
+              selectedCategory === String(category.id)
+                ? "bg-black text-white"
+                : "bg-white text-black"
+            }`}
           >
-            <div>
-              <p className="text-xs uppercase text-gray-400 mb-1">Category</p>
-              <h4 className="text-lg font-semibold">{category.name}</h4>
-            </div>
-          </div>
+            {category.name}
+          </button>
         ))}
       </div>
     </section>

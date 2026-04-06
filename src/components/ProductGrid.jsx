@@ -1,6 +1,10 @@
 import ProductCard from "./ProductCard";
 
 const ProductGrid = ({ products }) => {
+  if (!products || products.length === 0) {
+    return <p className="text-gray-500 text-center">No products found.</p>;
+  }
+
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
@@ -12,15 +16,11 @@ const ProductGrid = ({ products }) => {
         </div>
       </div>
 
-      {products.length === 0 ? (
-        <p className="text-gray-500">No products found.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
-          {products.slice(0, 8).map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+        {products.slice(0, 8).map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
 
       {products.length > 8 && (
         <div className="mt-6 text-center">

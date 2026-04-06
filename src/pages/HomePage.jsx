@@ -1,59 +1,50 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import HeroSection from "../components/HeroSection";
 import CategorySection from "../components/CategorySection";
 import ProductGrid from "../components/ProductGrid";
-import NewsletterSection from "../components/NewsletterSection";
 import Footer from "../components/Footer";
 
 const HomePage = () => {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const categories = [
-    { id: 1, name: "Clothing" },
-    { id: 2, name: "Electronics" },
-    { id: 3, name: "Books" },
-  ];
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
 
-  const products = [
-    {
-      id: 1,
-      name: "Classic Essential Tee",
-      description: "Soft cotton everyday shirt.",
-      price: 39.99,
-      category_id: 1,
-      category_name: "Clothing",
-      image_url: "https://via.placeholder.com/300x220",
-    },
-    {
-      id: 2,
-      name: "Wireless Headphones",
-      description: "Clean sound and modern design.",
-      price: 89.99,
-      category_id: 2,
-      category_name: "Electronics",
-      image_url: "https://via.placeholder.com/300x220",
-    },
-    {
-      id: 3,
-      name: "Minimal Desk Lamp",
-      description: "Warm light for your workspace.",
-      price: 29.99,
-      category_id: 2,
-      category_name: "Electronics",
-      image_url: "https://via.placeholder.com/300x220",
-    },
-    {
-      id: 4,
-      name: "The Design Book",
-      description: "A beautiful book about design.",
-      price: 24.99,
-      category_id: 3,
-      category_name: "Books",
-      image_url: "https://via.placeholder.com/300x220",
-    },
-  ];
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function fetchHomeData() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const [categoriesRes, productsRes] = await Promise.all([
+          fetch("http://localhost:5000/categories"),
+          fetch("http://localhost:5000/products"),
+        ]);
+
+        if (!categoriesRes.ok || !productsRes.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const categoriesData = await categoriesRes.json();
+        const productsData = await productsRes.json();
+
+        setCategories(categoriesData.data || []);
+        setProducts(productsData.data || []);
+      } catch (err) {
+        console.log(err);
+        setError("Something went wrong. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchHomeData();
+  }, []);
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name
@@ -79,9 +70,28 @@ const HomePage = () => {
 
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-10">
         <HeroSection />
-        <CategorySection categories={categories} />
-        <ProductGrid products={filteredProducts} />
-        <NewsletterSection />
+
+        <CategorySection
+          categories={categories}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
+
+        {loading && (
+          <p className="text-center text-gray-500">Loading products...</p>
+        )}
+
+        {error && (
+          <p className="text-center text-red-500">{error}</p>
+        )}
+
+        {!loading && !error && filteredProducts.length === 0 && (
+          <p className="text-center text-gray-500">No products found.</p>
+        )}
+
+        {!loading && !error && filteredProducts.length > 0 && (
+          <ProductGrid products={filteredProducts} />
+        )}
       </main>
 
       <Footer />

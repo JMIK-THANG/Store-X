@@ -5,24 +5,19 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-  const result = await db.query(`
-  SELECT
-    p.id,
-    p.name,
-    p.description,
-    p.price,
-    p.category_id,
-    p.stock,
-    p.created_at,
-    COALESCE(
-      JSON_AGG(pi.image_url) FILTER (WHERE pi.image_url IS NOT NULL),
-      '[]'
-    ) AS images
-  FROM products p
-  LEFT JOIN product_images pi
-    ON p.id = pi.product_id
-  GROUP BY p.id;
-`);
+    const result = await db.query(`
+      SELECT
+        id,
+        name,
+        description,
+        price,
+        category_id,
+        stock,
+        created_at,
+        image_url
+      FROM products
+      ORDER BY id ASC;
+    `);
 
     res.json({
       message: "Products fetched successfully",

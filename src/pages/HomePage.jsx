@@ -22,8 +22,8 @@ const HomePage = () => {
         setError("");
 
         const [categoriesRes, productsRes] = await Promise.all([
-          fetch("http://localhost:5000/categories"),
-          fetch("http://localhost:5000/products"),
+          fetch("https://fakestoreapi.com/products"),
+          // fetch("http://localhost:5000/products"),
         ]);
 
         if (!categoriesRes.ok || !productsRes.ok) {

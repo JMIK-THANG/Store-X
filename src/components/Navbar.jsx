@@ -1,63 +1,37 @@
-import { Link } from "react-router-dom";
-
 const Navbar = ({
   categories,
   selectedCategory,
   setSelectedCategory,
   search,
-  setSearch,
+  setsearch,
 }) => {
   return (
-    <header className="bg-white border-b">
-      <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <header className="w-full border-b bg-white sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <h1 className="text-2xl font-bold">&#x1F6D2; Store X</h1>
 
-        {/* LEFT: Logo */}
-        <h1 className="text-xl font-semibold">Store-X</h1>
-
-        {/* CENTER: Category + Search */}
         <div className="flex flex-col md:flex-row gap-3 md:items-center">
-
-          {/* Category Dropdown */}
           <select
+            className="border rounded-lg px-3 py-2"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="border rounded-full px-4 py-2 text-sm bg-white"
           >
             <option value="All">All</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={String(cat.id)}>
-                {cat.name}
+            {categories.map((categ) => (
+              <option key={categ} value={categ}>
+                {categ}
               </option>
             ))}
           </select>
 
-          {/* Search */}
           <input
+            className="border rounded-lg px-3 py-2 w-full md:w-64"
             type="text"
             placeholder="Search products..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="border rounded-full px-4 py-2 text-sm w-full md:w-64"
+            onChange={(e) => setsearch(e.target.value)}
           />
         </div>
-
-        {/* RIGHT: Auth Buttons */}
-        <div className="flex gap-3">
-          <Link
-            to="/login"
-            className="px-4 py-2 rounded-full border text-sm hover:bg-gray-100"
-          >
-            Login
-          </Link>
-
-          <Link
-            to="/register"
-            className="px-4 py-2 rounded-full bg-[#6f8f7b] text-white text-sm hover:opacity-90"
-          >
-            Sign Up
-          </Link>
-        </div>
-
       </div>
     </header>
   );

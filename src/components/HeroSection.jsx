@@ -1,34 +1,37 @@
 const HeroSection = () => {
   return (
-    <section className="rounded-3xl bg-[#dfe8dd] overflow-hidden">
-      <div className="grid md:grid-cols-2 min-h-[320px]">
-        <div className="p-8 md:p-12 flex flex-col justify-center">
-          <p className="text-xs uppercase tracking-widest text-gray-500 mb-3">
-            New Collection 2024
+    <section className="relative h-[70vh] md:h-[80vh] w-full">
+      {/* Background Image */}
+     <img
+  src="https://images.unsplash.com/photo-1521335629791-ce4aec67dd53?w=1200"
+  alt="Hero"
+  className="absolute inset-0 w-full h-full object-cover"
+/>
+
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/40" />
+
+      {/* Content */}
+      <div className="relative z-10 h-full flex items-center px-4 md:px-8 lg:px-16">
+        <div className="max-w-xl text-white">
+          <p className="uppercase text-sm tracking-widest mb-3">
+            New Arrivals
           </p>
 
-          <h2 className="text-3xl md:text-5xl font-semibold leading-tight mb-4">
-            Curated for the
+          <h2 className="text-4xl md:text-6xl font-bold mb-4 leading-tight">
+            Find Your
             <br />
-            Essentialist.
+            Everyday Style
           </h2>
 
-          <p className="text-gray-600 max-w-md mb-6">
-            Thoughtfully selected pieces that blend timeless design with modern
-            utility.
+          <p className="text-gray-200 mb-6">
+            Simple, clean products made for daily life.
           </p>
 
-          <div className="flex gap-3">
-            <button className="bg-[#4f6f52] text-white px-5 py-3 rounded-full text-sm">
-              Explore Collection
-            </button>
-            <button className="bg-white px-5 py-3 rounded-full text-sm border">
-              Our Story
-            </button>
-          </div>
+          <button className="bg-white text-black px-6 py-3 rounded-full font-medium hover:opacity-90 transition">
+            Shop Now
+          </button>
         </div>
-
-        <div className="hidden md:block bg-gradient-to-br from-[#cfd8cc] to-[#f2eadf]" />
       </div>
     </section>
   );

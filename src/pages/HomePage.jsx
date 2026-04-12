@@ -16,36 +16,26 @@ const HomePage = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function fetchHomeData() {
+    async function FetchHomeData() {
       try {
-        setLoading(true);
-        setError("");
+        setLoading(true)
+        let fetchData = await fetch("https://fakestoreapi.com/products");
+        let productData = await fetchData.json();
+        setProducts(productData);
 
-        const [categoriesRes, productsRes] = await Promise.all([
-          fetch("https://fakestoreapi.com/products"),
-          // fetch("http://localhost:5000/products"),
-        ]);
-
-        if (!categoriesRes.ok || !productsRes.ok) {
-          throw new Error("Failed to fetch data");
-        }
-
-        const categoriesData = await categoriesRes.json();
-        const productsData = await productsRes.json();
-        console.log("products:", productsData);
-
-        setCategories(categoriesData.data || []);
-        setProducts(productsData.data || []);
+        let uniqueCategories = Array.from(
+          new Set(productData.map((product) => product.category)),
+        );
+        setCategories(uniqueCategories);
       } catch (err) {
-        console.log(err);
-        setError("Something went wrong. Please try again later.");
-      } finally {
-        setLoading(false);
+        setError("Something Went Wrong | Try Again Later");
+      } finally{ 
+        setLoading(false); 
       }
     }
-
-    fetchHomeData();
+    FetchHomeData();
   }, []);
+
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name

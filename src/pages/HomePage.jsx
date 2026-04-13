@@ -21,12 +21,15 @@ const HomePage = () => {
         setLoading(true);
         setError("");
 
-        const fetchData = await fetch("https://fakestoreapi.com/products");
-        const productData = await fetchData.json();
+        const response = await fetch("https://fakestoreapi.com/products");
+        const productData = await response.json();
 
         setProducts(productData);
 
-        const uniqueCategories = ["All", ...new Set(productData.map((product) => product.category))];
+        const uniqueCategories = [
+          "All",
+          ...new Set(productData.map((product) => product.category)),
+        ];
         setCategories(uniqueCategories);
       } catch (err) {
         setError("Something went wrong | Try again later");
@@ -41,7 +44,7 @@ const HomePage = () => {
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.title
       ?.toLowerCase()
-      .includes((search || "").toLowerCase());
+      .includes(search.toLowerCase());
 
     const matchesCategory =
       selectedCategory === "All" || product.category === selectedCategory;
@@ -51,21 +54,17 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-[#f7f7f5] text-[#1f2937]">
-      <Navbar
-        categories={categories}
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-        search={search}
-        setSearch={setSearch}
-      />
+      <Navbar />
 
-      <main className="max-w-6xl mx-auto px-4 py-6 space-y-10">
+      <main className="max-w-7xl mx-auto px-4 py-6 space-y-8">
         <HeroSection />
 
         <CategorySection
           categories={categories}
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
+          search={search}
+          setSearch={setSearch}
         />
 
         {loading && (

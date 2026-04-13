@@ -1,22 +1,36 @@
 const ProductCard = ({ product }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition p-4 flex flex-col">
+    <div className="group bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 p-4 flex flex-col">
+      
+      {/* Image */}
       <div className="h-48 bg-gray-100 rounded-xl overflow-hidden">
         <img
-          src={product.image_url}
-          alt={product.name}
-          className="w-full h-full object-cover"
+          src={product.image}
+          alt={product.title}
+          className="w-full h-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
         />
       </div>
 
-      <div className="mt-4 flex flex-col gap-2">
-        <h3 className="font-semibold text-sm">{product.name}</h3>
-        <p className="text-xs text-gray-500 line-clamp-2">
-          {product.description}
+      {/* Content */}
+      <div className="mt-4 flex flex-col gap-2 flex-grow">
+        
+        {/* Category (NEW - important) */}
+        <p className="text-[10px] uppercase tracking-wide text-gray-400">
+          {product.category}
         </p>
-        <p className="font-medium text-sm">${product.price}</p>
 
-        <button className="mt-auto bg-black text-white text-sm py-2 rounded-full hover:opacity-90 transition">
+        {/* Title (fixed height) */}
+        <h3 className="font-semibold text-sm leading-tight line-clamp-2 min-h-[36px]">
+          {product.title}
+        </h3>
+
+        {/* Price */}
+        <p className="font-semibold text-base text-gray-900">
+          ${product.price}
+        </p>
+
+        {/* Button */}
+        <button className="mt-auto border border-black text-black text-sm py-2 rounded-full transition hover:bg-black hover:text-white">
           Add to Cart
         </button>
       </div>

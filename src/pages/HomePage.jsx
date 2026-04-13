@@ -16,35 +16,35 @@ const HomePage = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function FetchHomeData() {
+    async function fetchHomeData() {
       try {
-        setLoading(true)
-        let fetchData = await fetch("https://fakestoreapi.com/products");
-        let productData = await fetchData.json();
+        setLoading(true);
+        setError("");
+
+        const fetchData = await fetch("https://fakestoreapi.com/products");
+        const productData = await fetchData.json();
+
         setProducts(productData);
 
-        let uniqueCategories = Array.from(
-          new Set(productData.map((product) => product.category)),
-        );
+        const uniqueCategories = ["All", ...new Set(productData.map((product) => product.category))];
         setCategories(uniqueCategories);
       } catch (err) {
-        setError("Something Went Wrong | Try Again Later");
-      } finally{ 
-        setLoading(false); 
+        setError("Something went wrong | Try again later");
+      } finally {
+        setLoading(false);
       }
     }
-    FetchHomeData();
+
+    fetchHomeData();
   }, []);
 
-
   const filteredProducts = products.filter((product) => {
-    const matchesSearch = product.name
-      .toLowerCase()
-      .includes(search.toLowerCase());
+    const matchesSearch = product.title
+      ?.toLowerCase()
+      .includes((search || "").toLowerCase());
 
     const matchesCategory =
-      selectedCategory === "All" ||
-      product.category_id === Number(selectedCategory);
+      selectedCategory === "All" || product.category === selectedCategory;
 
     return matchesSearch && matchesCategory;
   });

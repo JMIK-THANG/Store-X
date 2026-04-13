@@ -14,7 +14,7 @@ app.use(express.json());
 // Routes
 app.use("/users", usersRoutes);
 app.use("/categories", categoriesRoutes);
-app.use('/products', productsRoutes)
+app.use('/api/products', productsRoutes)
 
 
 // Start server

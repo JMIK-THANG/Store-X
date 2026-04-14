@@ -1,41 +1,20 @@
-const express = require("express");
-const db = require("../config/db");
+import db from "../config/db.js";
 
-const router = express.Router();
-
-router.get("/", async (req, res) => {
+export const getProducts = async (req, res) => {
   try {
-    const result = await db.query("SELECT * FROM users");
-
-    res.json({
-      message: "Users fetched successfully",
-      data: result.rows,
-    });
-  } catch (err) {
-    res.status(500).json({
-      message: "Error fetching users",
-      error: err.message,
-    });
+    const result = await db.query(
+      `select products.id, products.name, products.price, products.image, categories.name as category from product
+       join categories on products.category_id = categories.id `,
+    );
+    res.json(result.rows); 
+  } catch(err) {
+      res.json({error:"Server error",err}); 
   }
-});
+};
 
-router.post("/", async (req,res)=> { 
-      try{ 
-            const {name, email, password} = req.body; 
+import express from "express";
 
-            const result = await db.query (
-                  "INSERT INTO users(name, email, password) VALUES($1, $2, $3) RETURNING *",
-                  [name, email, password]
-            ); 
+import {getProducts} from "../controllers/productController.js"
+const router = express.Router(); 
 
-            res.json({
-                  message: "User created successfully",
-                  data:result.rows[0],
-            }); 
-      } catch (err) { 
-            res.status(500).json({
-                  message:"Error creating user",
-                  error:err.message,
-            })
-      }
-})
+router.get('/', getProducts); 

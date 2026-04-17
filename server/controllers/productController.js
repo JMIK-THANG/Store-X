@@ -1,15 +1,22 @@
-import db from "../config/db.js";
+const db = require("../config/db");
 
-export const getProducts = async (req, res) => {
+const getProducts = async (req, res) => {
   try {
     const result = await db.query(
-      `select products.id, products.name, products.price, products.image, 
-       categories.name as category from product join categories
-       on products.category_id = categories.id`,
+      `SELECT products.id, products.name, products.price, products.image,
+              categories.name AS category
+       FROM products
+       JOIN categories
+       ON products.category_id = categories.id`
     );
+
     res.json(result.rows);
   } catch (err) {
-    console.error("error ....", err);
-    res.json({ error: "Server error" });
+    console.error("error....", err);
+    res.status(500).json({ error: "Server error" });
   }
+};
+
+module.exports = {
+  getProducts,
 };

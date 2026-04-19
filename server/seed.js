@@ -1,4 +1,4 @@
-const db = require("./config/db");
+import db from "./config/db.js";
 
 async function seedToDb() {
   try {
@@ -28,7 +28,7 @@ async function seedToDb() {
     for (const product of products) {
       await db.query(
         `
-        INSERT INTO products (title, price, description, image, category_id)
+        INSERT INTO products (name, price, description, image_url, category_id)
         VALUES ($1, $2, $3, $4, $5)
         `,
         [
@@ -42,10 +42,10 @@ async function seedToDb() {
     }
 
     console.log("Seeding complete!");
-    process.exit();
+    // process.exit();
   } catch (error) {
     console.error("Error seeding database:", error.message);
-    process.exit(1);
+    // process.exit(1);
   }
 }
 

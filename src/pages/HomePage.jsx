@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import HeroSection from "../components/HeroSection";
 import CategorySection from "../components/CategorySection";
@@ -66,14 +67,15 @@ const HomePage = () => {
           search={search}
           setSearch={setSearch}
         />
+        <Link to="/cart" className="border p-2 rounded-2xl ">
+          <button>Go to cart</button>
+        </Link>
 
         {loading && (
           <p className="text-center text-gray-500">Loading products...</p>
         )}
 
-        {error && (
-          <p className="text-center text-red-500">{error}</p>
-        )}
+        {error && <p className="text-center text-red-500">{error}</p>}
 
         {!loading && !error && filteredProducts.length === 0 && (
           <p className="text-center text-gray-500">No products found.</p>

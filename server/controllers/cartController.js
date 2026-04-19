@@ -1,7 +1,7 @@
 import db from "../config/db.js";
 
 // Find existing cart or create one
-const findOrCreateCart = async (user_id) => {
+export const findOrCreateCart = async (user_id) => {
   const cartResult = await db.query(
     `SELECT * FROM cart WHERE user_id = $1`,
     [user_id]
@@ -19,7 +19,7 @@ const findOrCreateCart = async (user_id) => {
 };
 
 // Add to cart
-const addToCart = async (req, res) => {
+export const addToCart = async (req, res) => {
   try {
     const { user_id, product_id, quantity } = req.body;
 
@@ -57,7 +57,7 @@ const addToCart = async (req, res) => {
 };
 
 // Get cart
-const getCart = async (req, res) => {
+export const getCart = async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -91,5 +91,3 @@ const getCart = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-
-export { addToCart, getCart };

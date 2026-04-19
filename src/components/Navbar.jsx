@@ -4,14 +4,14 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16 py-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold">&#x1F6D2; Store X</h1>
 
-        <div className="flex items-center gap-3">
+        {/* <div className="flex items-center gap-3">
           <button className="px-4 py-2 text-sm font-medium rounded-full border border-gray-300 hover:border-black hover:text-black transition">
             Log In
           </button>
           <button className="px-4 py-2 text-sm font-medium rounded-full bg-black text-white hover:opacity-90 transition">
             Sign Up
           </button>
-        </div>
+        </div> */}
       </div>
     </header>
   );

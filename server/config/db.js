@@ -1,4 +1,6 @@
-const { Client } = require("pg");
+import pg from "pg";
+
+const { Client } = pg;
 
 const dbConfig = {
   user: "postgres",
@@ -18,4 +20,4 @@ db.connect()
     console.error("Connection error:", err);
   });
 
-module.exports = db;
+export default db;

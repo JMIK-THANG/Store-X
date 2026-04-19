@@ -1,10 +1,14 @@
-const db = require("../config/db");
+import db from "../config/db.js";
 
 const getProducts = async (req, res) => {
   try {
     const result = await db.query(
-      `SELECT products.id, products.name, products.price, products.image,
-              categories.name AS category
+      `SELECT 
+        products.id, 
+        products.name, 
+        products.price, 
+        products.image,
+        categories.name AS category
        FROM products
        JOIN categories
        ON products.category_id = categories.id`
@@ -17,6 +21,4 @@ const getProducts = async (req, res) => {
   }
 };
 
-module.exports = {
-  getProducts,
-};
+export { getProducts };

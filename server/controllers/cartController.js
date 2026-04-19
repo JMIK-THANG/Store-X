@@ -1,4 +1,4 @@
-const db = require("../config/db");
+import db from "../config/db.js";
 
 // Find existing cart or create one
 const findOrCreateCart = async (user_id) => {
@@ -92,7 +92,4 @@ const getCart = async (req, res) => {
   }
 };
 
-module.exports = {
-  addToCart,
-  getCart,
-};
+export { addToCart, getCart };

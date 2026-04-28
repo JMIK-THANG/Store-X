@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
+
 const ProductCard = ({ product }) => {
+  
   const addItem = async (itemId) => {
     await fetch("http://localhost:5000/api/cart", {
       method: "POST",

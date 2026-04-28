@@ -2,7 +2,6 @@ import db from "../config/db.js";
 
 const createOrderController = async (req, res) => {
   try {
-    // Step 1: Fetch data from frontend/Postman
     const {
       user_id,
       address_line,
@@ -13,58 +12,62 @@ const createOrderController = async (req, res) => {
       payment_method,
     } = req.body;
 
-    // Step 2: Check whether user has a cart
-    const cart = await db.query(
-      `SELECT * FROM cart WHERE user_id = $1`,
-      [user_id]
-    );
+    const cart = await db.query(`SELECT * FROM cart WHERE user_id = $1`, [
+      user_id,
+    ]);
 
     if (cart.rows.length === 0) {
-      return res.json({ error: "Cart not found" });
+      return res.status(404).json({ error: "Cart not found" });
     }
 
-    // Step 3: Calculate total price of order
+    const cartId = cart.rows[0].id;
+
     const cartItems = await db.query(
-      `SELECT p.price, ci.quantity 
-       FROM cart_items ci 
-       JOIN products p ON ci.product_id = p.id 
-       WHERE ci.cart_id = $1`,
-      [cart.rows[0].id]
+      `SELECT 
+        ci.product_id,
+        ci.quantity,
+        p.price
+      FROM cart_items ci
+      JOIN products p ON ci.product_id = p.id
+      WHERE ci.cart_id = $1`,
+      [cartId],
     );
+
+    if (cartItems.rows.length === 0) {
+      return res.status(400).json({ error: "Cart is empty" });
+    }
 
     let total_amount = 0;
 
     for (const item of cartItems.rows) {
-      total_amount += item.price * item.quantity;
+      total_amount += Number(item.price) * Number(item.quantity);
     }
 
-    // Step 4: Create order
     const order = await db.query(
       `INSERT INTO orders(
         user_id,
+        total_amount,
         address_line,
         city,
         state,
         country,
         zip_code,
-        payment_method,
-        total_amound
+        payment_method
       ) 
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) 
       RETURNING *`,
       [
         user_id,
+        total_amount,
         address_line,
         city,
         state,
         country,
         zip_code,
         payment_method,
-        total_amount,
-      ]
+      ],
     );
 
-    // Step 5: Insert order items
     for (const item of cartItems.rows) {
       await db.query(
         `INSERT INTO order_items(
@@ -74,28 +77,25 @@ const createOrderController = async (req, res) => {
           price
         ) 
         VALUES ($1,$2,$3,$4)`,
-        [
-          order.rows[0].id,
-          item.product_id,
-          item.quantity,
-          item.price,
-        ]
+        [order.rows[0].id, item.product_id, item.quantity, item.price],
       );
     }
 
-    // Step 6: Clear cart
-    await db.query(
-      `DELETE FROM cart_items WHERE cart_id = $1`,
-      [cart.rows[0].id]
+    const deletedItems = await db.query(
+      `DELETE FROM cart_items 
+       WHERE cart_id = $1
+       RETURNING *`,
+      [cartId],
     );
 
-    // Step 7: Send response to frontend
-    res.json({
+    res.status(201).json({
       message: "Order Created Successfully",
       order_id: order.rows[0].id,
+      deleted_cart_items: deletedItems.rows.length,
     });
   } catch (err) {
-    res.json({ error: "Server Error" });
+    console.error("Create order error:", err);
+    res.status(500).json({ error: "Server Error" });
   }
 };
 

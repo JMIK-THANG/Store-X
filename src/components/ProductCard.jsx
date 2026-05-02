@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const ProductCard = ({ product }) => {
   const [message, setMessage] = useState("");
@@ -21,8 +22,6 @@ const ProductCard = ({ product }) => {
     }
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL;
-
       const res = await fetch(`${API_URL}/api/cart`, {
         method: "POST",
         headers: {
@@ -35,18 +34,16 @@ const ProductCard = ({ product }) => {
         }),
       });
 
-      // ✅ check if request succeeded
+      const data = await res.json();
+      console.log("Cart response:", data);
+
       if (!res.ok) {
-        throw new Error("Request failed");
+        throw new Error(data.error || data.message || "Failed to add item");
       }
 
-      const data = await res.json(); // optional but good
-
-      console.log("Cart response:", data); // debug
-
-      showMessage("Successfully added!");
+      showMessage(data.message || "Successfully added!");
     } catch (err) {
-      console.error("Add to cart error:", err);
+      console.error("Add item error:", err.message);
       showMessage("Failed to add item.");
     }
   };

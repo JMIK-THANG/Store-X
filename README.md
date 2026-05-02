@@ -59,6 +59,7 @@ To explore the app:
 
 ## 📁 Project Structure
 
+```bash
 Store-X/
 ├── client/            # React frontend
 ├── server/            # Express backend

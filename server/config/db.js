@@ -3,13 +3,15 @@ import "dotenv/config";
 
 const { Client } = pg;
 
+const isRender = process.env.RENDER === "true";
+
 const db = new Client({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
+  ssl: isRender ? { rejectUnauthorized: false } : false,
 });
 
 db.connect()
   .then(() => console.log("Database is connected"))
   .catch((err) => console.error("Connection error:", err));
-console.log("DATABASE_URL:", process.env.DATABASE_URL);
+
 export default db;

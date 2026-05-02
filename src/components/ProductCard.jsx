@@ -21,31 +21,43 @@ const ProductCard = ({ product }) => {
     }
 
     try {
-      await fetch("http://localhost:5000/api/cart", {
+      const API_URL = import.meta.env.VITE_API_URL;
+
+      const res = await fetch(`${API_URL}/api/cart`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          user_id: user.id, // ✅ dynamic now
+          user_id: user.id,
           product_id: itemId,
           quantity: 1,
         }),
       });
 
+      // ✅ check if request succeeded
+      if (!res.ok) {
+        throw new Error("Request failed");
+      }
+
+      const data = await res.json(); // optional but good
+
+      console.log("Cart response:", data); // debug
+
       showMessage("Successfully added!");
     } catch (err) {
-      console.error(err);
+      console.error("Add to cart error:", err);
       showMessage("Failed to add item.");
     }
   };
-
   return (
     <>
       {/* ✅ Popup message */}
-    {message && (
-  <div className="fixed top-10 left-1/2 -translate-x-1/2 z-50 rounded-lg bg-black px-6 py-3 text-white shadow-lg">
-    {message}
-  </div>
-)}
+      {message && (
+        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-50 rounded-lg bg-black px-6 py-3 text-white shadow-lg">
+          {message}
+        </div>
+      )}
       <div className="group bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 p-4 flex flex-col">
         {/* Image */}
         <div className="h-48 bg-gray-100 rounded-xl overflow-hidden">

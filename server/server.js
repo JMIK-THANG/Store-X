@@ -10,6 +10,13 @@ const app = express();
 
 // Middleware
 app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://store-x-djme.onrender.com"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 // Routes
@@ -44,7 +51,7 @@ app.post("/saveusers", async (req, res) => {
       `INSERT INTO users(name, email, password)
        VALUES ($1, $2, $3)
        RETURNING *`,
-      [name, email, password]
+      [name, email, password],
     );
 
     res.json({

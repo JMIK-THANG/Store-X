@@ -13,7 +13,7 @@ const Navbar = () => {
   const handleDemoLogin = () => {
     const demoUser = {
       id: 1,
-      name: "Demo User",
+      name: "Hello, Demo User",
       email: "demo@test.com",
     };
 

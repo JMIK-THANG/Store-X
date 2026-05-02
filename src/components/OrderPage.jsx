@@ -3,163 +3,117 @@ import { useNavigate } from "react-router-dom";
 
 const OrderPage = () => {
   const navigate = useNavigate();
-  
+
   const [cartItems, setCartItems] = useState([]);
-  const [orderForm, setOrderForm] = useState({
-    user_id: 1,
+  const [statusMessage, setStatusMessage] = useState("");
+  const [placedOrder, setPlacedOrder] = useState(null);
+
+  const [form, setForm] = useState({
     address_line: "",
     city: "",
     state: "",
     country: "",
     zip_code: "",
-    payment_method: "cod",
+    payment_method: "card",
   });
 
-  const [statusMessage, setStatusMessage] = useState("");
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
 
-  const handleFormChange = (e) => {
-    setOrderForm({
-      ...orderForm,
-      [e.target.name]: e.target.value,
-    });
+    if (!user) {
+      alert("Please use Demo Login first");
+      navigate("/");
+      return;
+    }
+
+    fetch(`http://localhost:5000/api/cart/${user.id}`)
+      .then((res) => res.json())
+      .then((data) => setCartItems(data))
+      .catch((err) => console.error("Cart error:", err));
+  }, [navigate]);
+
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  const totalPrice = cartItems.reduce(
+    (sum, item) => sum + Number(item.price) * item.quantity,
+    0
+  );
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleOrderSubmit = () => {
+  const placeOrder = () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+      alert("Please use Demo Login first");
+      return;
+    }
+
+    if (
+      !form.address_line ||
+      !form.city ||
+      !form.state ||
+      !form.country ||
+      !form.zip_code
+    ) {
+      setStatusMessage("Please fill in all shipping fields.");
+      return;
+    }
+
+    const orderData = {
+      ...form,
+      user_id: user.id,
+    };
+
     fetch("http://localhost:5000/api/orders/addorder", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(orderForm),
+      body: JSON.stringify(orderData),
     })
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to place order");
+        if (!res.ok) throw new Error("Order failed");
         return res.json();
       })
-      .then((data) => {
-        console.log(data);
+      .then(() => {
+        setPlacedOrder({
+          items: cartItems,
+          totalItems,
+          totalPrice,
+          shipping: form,
+        });
 
-        setStatusMessage("✅ Order placed successfully!");
-        setCartItems([]);
-
-        setTimeout(() => {
-          navigate("/"); // home page
-        }, 1500);
+        setStatusMessage("Order placed successfully!");
       })
       .catch((err) => {
-        console.error(err);
-        setStatusMessage("❌ Failed to place order.");
+        console.error("Order error:", err);
+        setStatusMessage("Failed to place order.");
       });
   };
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api/cart/1")
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch cart items");
-        return res.json();
-      })
-      .then((data) => setCartItems(data))
-      .catch((err) => console.error(err));
-  }, []);
+  if (placedOrder) {
+    return (
+      <div className="min-h-screen bg-gray-100 px-4 py-10">
+        <div className="mx-auto max-w-2xl rounded-2xl bg-white p-8 shadow-lg">
+          <h1 className="mb-2 text-3xl font-bold text-green-600">
+            Order Placed!
+          </h1>
 
-  const totalItems = cartItems.reduce(
-    (total, item) => total + item.quantity,
-    0,
-  );
+          <p className="mb-8 text-gray-600">
+            Thank you. Here is your order summary.
+          </p>
 
-  const totalPrice = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0,
-  );
-
-  return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4">
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
-        {/* Shipping Form */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h1 className="text-3xl font-bold mb-8 text-gray-800">Checkout</h1>
-
-          <h2 className="text-xl font-semibold mb-4">Shipping Address</h2>
+          <h2 className="mb-4 text-xl font-semibold">Items</h2>
 
           <div className="space-y-4">
-            <input
-              type="text"
-              name="address_line"
-              placeholder="Address"
-              onChange={handleFormChange}
-              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            <input
-              type="text"
-              name="city"
-              placeholder="City"
-              onChange={handleFormChange}
-              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            <input
-              type="text"
-              name="state"
-              placeholder="State"
-              onChange={handleFormChange}
-              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            <input
-              type="text"
-              name="country"
-              placeholder="Country"
-              onChange={handleFormChange}
-              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            <input
-              type="text"
-              name="zip_code"
-              placeholder="ZIP Code"
-              onChange={handleFormChange}
-              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <h2 className="text-xl font-semibold mt-8 mb-4">Payment Method</h2>
-
-          <select
-            name="payment_method"
-            onChange={handleFormChange}
-            className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="cod">Cash on Delivery</option>
-            <option value="card">Card</option>
-            <option value="upi">UPI</option>
-          </select>
-
-          <button
-            onClick={handleOrderSubmit}
-            className="w-full mt-8 bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-semibold transition"
-          >
-            Place Order
-          </button>
-
-          {statusMessage && (
-            <p className="mt-4 text-center font-medium text-green-600">
-              {statusMessage}
-            </p>
-          )}
-        </div>
-
-        {/* Order Summary */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 h-fit">
-          <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
-
-          <div className="space-y-5">
-            {cartItems.map((item) => (
-              <div key={item.id} className="flex justify-between border-b pb-4">
+            {placedOrder.items.map((item) => (
+              <div key={item.id} className="flex justify-between border-b pb-3">
                 <div>
-                  <h4 className="font-semibold text-lg">{item.name}</h4>
-
-                  <p className="text-gray-500">Qty: {item.quantity}</p>
+                  <p className="font-semibold">{item.name}</p>
+                  <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                 </div>
 
                 <p className="font-semibold">
@@ -169,17 +123,146 @@ const OrderPage = () => {
             ))}
           </div>
 
-          <div className="mt-8 space-y-3 border-t pt-6">
+          <div className="mt-6 space-y-2 border-t pt-4">
             <div className="flex justify-between">
               <span>Total Items</span>
-              <span>{totalItems}</span>
+              <span>{placedOrder.totalItems}</span>
             </div>
 
             <div className="flex justify-between text-xl font-bold">
-              <span>Total</span>
-              <span>${totalPrice.toFixed(2)}</span>
+              <span>Total Cost</span>
+              <span>${placedOrder.totalPrice.toFixed(2)}</span>
             </div>
           </div>
+
+          <button
+            onClick={() => navigate("/")}
+            className="mt-8 w-full rounded-xl bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700"
+          >
+            Back to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 px-4 py-10">
+      <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-2">
+        <div className="rounded-2xl bg-white p-8 shadow-lg">
+          <h1 className="mb-6 text-3xl font-bold">Checkout</h1>
+
+          <h2 className="mb-4 text-xl font-semibold">Shipping Address</h2>
+
+          <div className="space-y-4">
+            <input
+              name="address_line"
+              placeholder="Address"
+              value={form.address_line}
+              onChange={handleChange}
+              className="w-full rounded-lg border p-3"
+            />
+
+            <input
+              name="city"
+              placeholder="City"
+              value={form.city}
+              onChange={handleChange}
+              className="w-full rounded-lg border p-3"
+            />
+
+            <input
+              name="state"
+              placeholder="State"
+              value={form.state}
+              onChange={handleChange}
+              className="w-full rounded-lg border p-3"
+            />
+
+            <input
+              name="country"
+              placeholder="Country"
+              value={form.country}
+              onChange={handleChange}
+              className="w-full rounded-lg border p-3"
+            />
+
+            <input
+              name="zip_code"
+              placeholder="ZIP Code"
+              value={form.zip_code}
+              onChange={handleChange}
+              className="w-full rounded-lg border p-3"
+            />
+          </div>
+
+          <h2 className="mb-4 mt-8 text-xl font-semibold">Payment Method</h2>
+
+          <select
+            name="payment_method"
+            value={form.payment_method}
+            onChange={handleChange}
+            className="w-full rounded-lg border p-3"
+          >
+            <option value="card">Debit / Credit Card</option>
+            <option value="paypal">PayPal</option>
+            <option value="applepay">Apple Pay / Google Pay</option>
+          </select>
+
+          <button
+            onClick={placeOrder}
+            className="mt-8 w-full rounded-xl bg-blue-600 py-4 font-semibold text-white hover:bg-blue-700"
+          >
+            Place Order
+          </button>
+
+          {statusMessage && (
+            <p className="mt-4 text-center font-medium text-red-600">
+              {statusMessage}
+            </p>
+          )}
+        </div>
+
+        <div className="h-fit rounded-2xl bg-white p-8 shadow-lg">
+          <h2 className="mb-6 text-2xl font-bold">Order Summary</h2>
+
+          {cartItems.length === 0 ? (
+            <p className="text-gray-500">Your cart is empty.</p>
+          ) : (
+            <>
+              <div className="space-y-4">
+                {cartItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex justify-between border-b pb-3"
+                  >
+                    <div>
+                      <p className="font-semibold">{item.name}</p>
+                      <p className="text-sm text-gray-500">
+                        Qty: {item.quantity}
+                      </p>
+                    </div>
+
+                    <p className="font-semibold">
+                      ${(Number(item.price) * item.quantity).toFixed(2)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 space-y-2 border-t pt-4">
+                <div className="flex justify-between">
+                  <span>Total Items</span>
+                  <span>{totalItems}</span>
+                </div>
+
+                <div className="flex justify-between text-xl font-bold">
+                  <span>Total Cost</span>
+                  <span>${totalPrice.toFixed(2)}</span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

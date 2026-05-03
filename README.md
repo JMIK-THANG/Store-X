@@ -41,37 +41,34 @@ To explore the app:
 ## 🛠️ Tech Stack
 
 ### Frontend
-- React
-- Vite
+- React (Vite)
 - Tailwind CSS
+- JavaScript (ES6+)
 
 ### Backend
 - Node.js
-- Express
+- Express.js
 
 ### Database
 - PostgreSQL
+- pg (node-postgres)
 
+### Deployment
+- Render (Frontend & Backend)
 ---
 
-## 📂 Project Structure
+## 📁 Project Structure
 
+```bash
 Store-X/
-│
-├── client/ # React frontend
-├── server/ # Express backend
-├── routes/ # API routes
-├── controllers/ # Business logicStore-X/
-│
-├── client/ # React frontend
-├── server/ # Express backend
-├── routes/ # API routes
-├── controllers/ # Business logic
-└── config/ # Database config
-
-
-└── config/ # Database config
-
+├── client/            # React frontend
+├── server/            # Express backend
+│   ├── routes/        # API routes
+│   ├── controllers/   # Business logic
+│   ├── config/        # Database configuration
+│   └── server.js
+├── package.json
+└── README.md
 ---
 
 ## ⚙️ Getting Started

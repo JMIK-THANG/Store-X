@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-const API_URL = import.meta.env.VITE_API_URL;
 
 const ProductCard = ({ product }) => {
   const [message, setMessage] = useState("");
@@ -13,7 +11,7 @@ const ProductCard = ({ product }) => {
     }, 2500);
   };
 
-  const addItem = async (itemId) => {
+  const addItem = () => {
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (!user) {
@@ -21,31 +19,24 @@ const ProductCard = ({ product }) => {
       return;
     }
 
-    try {
-      const res = await fetch(`${API_URL}/api/cart`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_id: user.id,
-          product_id: itemId,
-          quantity: 1,
-        }),
-      });
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-      const data = await res.json();
-      console.log("Cart response:", data);
+    const existingItem = cart.find((item) => item.id === product.id);
 
-      if (!res.ok) {
-        throw new Error(data.error || data.message || "Failed to add item");
-      }
+    let updatedCart;
 
-      showMessage(data.message || "Successfully added!");
-    } catch (err) {
-      console.error("Add item error:", err.message);
-      showMessage("Failed to add item.");
+    if (existingItem) {
+      updatedCart = cart.map((item) =>
+        item.id === product.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item,
+      );
+    } else {
+      updatedCart = [...cart, { ...product, quantity: 1 }];
     }
+
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    showMessage("Added to cart!");
   };
   return (
     <>
@@ -80,7 +71,7 @@ const ProductCard = ({ product }) => {
           </p>
 
           <button
-            onClick={() => addItem(product.id)}
+            onClick={addItem}
             className="mt-auto border border-black text-black text-sm py-2 rounded-full transition hover:bg-black hover:text-white"
           >
             Add to Cart

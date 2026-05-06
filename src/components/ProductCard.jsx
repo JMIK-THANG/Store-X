@@ -40,7 +40,7 @@ const ProductCard = ({ product }) => {
   };
   return (
     <>
-      {/* ✅ Popup message */}
+        {/* ✅ Popup message */}
       {message && (
         <div className="fixed top-10 left-1/2 -translate-x-1/2 z-50 rounded-lg bg-black px-6 py-3 text-white shadow-lg">
           {message}

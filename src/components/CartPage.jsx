@@ -1,106 +1,71 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-function CartPage() {
-  const [items, setItems] = useState([]);
+const CartPage = () => {
+  const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/cart/1")
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to fetch cart items");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setItems(data);
-      })
-      .catch((err) => {
-        console.error("Error fetching cart items:", err);
-      });
+    const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCartItems(savedCart);
   }, []);
 
-  const total = items.reduce(
-    (sum, item) => sum + Number(item.price) * item.quantity,
+  const removeItem = (id) => {
+    const updatedCart = cartItems.filter((item) => item.id !== id);
+    setCartItems(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
+
+  const total = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
     0
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4">
-      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-8">
-        <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">
-          My Cart
-        </h2>
+    <section className="min-h-screen bg-gray-50 px-4 py-10">
+      <div className="mx-auto max-w-5xl">
+        <h1 className="mb-6 text-3xl font-bold">Your Cart</h1>
 
-        {items.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg mb-4">
-              Your cart is empty
-            </p>
-
-            <Link to="/">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition">
-                Continue Shopping
-              </button>
-            </Link>
-          </div>
+        {cartItems.length === 0 ? (
+          <p className="text-gray-500">Your cart is empty.</p>
         ) : (
-          <>
-            <div className="space-y-6">
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  className="border rounded-xl p-6 shadow-sm hover:shadow-md transition bg-gray-50"
-                >
-                  <div className="flex justify-between items-center flex-wrap gap-4">
-                    <div>
-                      <h4 className="text-xl font-semibold text-gray-800">
-                        {item.name}
-                      </h4>
+          <div className="space-y-4">
+            {cartItems.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm"
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="h-20 w-20 object-contain"
+                />
 
-                      <p className="text-gray-600 mt-2">
-                        Price: 
-                        <span className="font-medium ml-1">
-                          ${Number(item.price).toFixed(2)}
-                        </span>
-                      </p>
-
-                      <p className="text-gray-600">
-                        Quantity:
-                        <span className="font-medium ml-1">
-                          {item.quantity}
-                        </span>
-                      </p>
-                    </div>
-
-                    <div className="text-lg font-bold text-green-600">
-                      $
-                      {(
-                        Number(item.price) * item.quantity
-                      ).toFixed(2)}
-                    </div>
-                  </div>
+                <div className="flex-1">
+                  <h2 className="font-semibold">{item.title}</h2>
+                  <p className="text-sm text-gray-500">
+                    Qty: {item.quantity}
+                  </p>
+                  <p className="font-semibold">${item.price}</p>
                 </div>
-              ))}
-            </div>
 
-            {/* Summary */}
-            <div className="mt-8 border-t pt-6 flex justify-between items-center flex-wrap gap-4">
-              <h3 className="text-2xl font-bold">
-                Total: ${total.toFixed(2)}
-              </h3>
-
-              <Link to="/orders">
-                <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition">
-                  Checkout
+                <button
+                  onClick={() => removeItem(item.id)}
+                  className="rounded-full border px-4 py-2 text-sm hover:bg-black hover:text-white"
+                >
+                  Remove
                 </button>
-              </Link>
+              </div>
+            ))}
+
+            <div className="rounded-2xl bg-white p-5 text-right shadow-sm">
+              <p className="text-xl font-bold">
+                Total: ${total.toFixed(2)}
+              </p>
             </div>
-          </>
+          </div>
         )}
       </div>
-    </div>
+    </section>
   );
-}
+};
 
 export default CartPage;

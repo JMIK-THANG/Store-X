@@ -15,7 +15,7 @@ const ProductCard = ({ product }) => {
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (!user) {
-      showMessage("Please click Demo Login first to add items.");
+      showMessage("Please click Login first to add items.");
       return;
     }
 
@@ -36,11 +36,12 @@ const ProductCard = ({ product }) => {
     }
 
     localStorage.setItem("cart", JSON.stringify(updatedCart));
+    window.dispatchEvent(new Event("storage"));
     showMessage("Added to cart!");
   };
   return (
     <>
-        {/* ✅ Popup message */}
+      {/* ✅ Popup message */}
       {message && (
         <div className="fixed top-10 left-1/2 -translate-x-1/2 z-50 rounded-lg bg-black px-6 py-3 text-white shadow-lg">
           {message}

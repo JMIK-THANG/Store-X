@@ -67,14 +67,7 @@ const HomePage = () => {
           search={search}
           setSearch={setSearch}
         />
-        <div className="flex justify-center md:justify-end">
-          <Link
-            to="/cart"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-medium shadow transition"
-          >
-            Go to Cart
-          </Link>
-        </div>
+       
         {loading && (
           <p className="text-center text-gray-500">Loading products...</p>
         )}
